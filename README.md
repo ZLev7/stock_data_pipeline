@@ -10,8 +10,7 @@ Stock quoutes (Yahoo finance API),
 Currency quotes (Yahoo finance API),
 Lending rates (NewYorkFed.org API),
 Treasury rates (Treasury.gov Web Site),
-Stock financials (balance sheet, cash flow and etc.),
-(MacroTrends.net Web Site)
+Stock financials (MacroTrends.net Web Site)
 
 Below are technologies I used for this project:
 Pandas
