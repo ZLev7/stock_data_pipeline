@@ -6,11 +6,12 @@ Its purpose is to exctract data from various sources, transform it
 and then load resulting set to relational database.
 
 The data itself consists of following:
-Stock quoutes (Yahoo finance API)
-Currency quotes (Yahoo finance API)
-Lending rates (NewYorkFed.org API)
-Treasury rates (Treasury.gov Web Site)
-Stock financials (balance sheet, cash flow and etc.) (MacroTrends.net Web Site)
+Stock quoutes (Yahoo finance API),
+Currency quotes (Yahoo finance API),
+Lending rates (NewYorkFed.org API),
+Treasury rates (Treasury.gov Web Site),
+Stock financials (balance sheet, cash flow and etc.),
+(MacroTrends.net Web Site)
 
 Below are technologies I used for this project:
 Pandas
