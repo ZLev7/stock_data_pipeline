@@ -13,12 +13,12 @@ Treasury rates (Treasury.gov Web Site),
 Stock financials (MacroTrends.net Web Site)
 
 Below are technologies I used for this project:
-Pandas
-Selenium
-SQLAlchemy
-PostgreSQL
-Airflow
-BeautifulSoup
+Pandas,
+Selenium,
+SQLAlchemy,
+PostgreSQL,
+Airflow,
+BeautifulSoup,
 FastAPI
 
 The project is deployed on vps, but I will demonstrate it only during interview
