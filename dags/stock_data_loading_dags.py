@@ -12,97 +12,154 @@ chat_id = ''
 
 url = f'https://api.telegram.org/bot{bot_token}/sendMessage'    
 
-vps_host = ''
+fastapi_host = 'http://'
 
 with DAG(
-    dag_id="loading_monthly_data",
+    dag_id="load_monthly_data",
     catchup=False,
     start_date=pendulum.datetime(2024, 3, 1, tz="UTC"),
     schedule='@monthly',
-    tags=["produces", "dataset-scheduled"],
-) as dag1:
+    tags=["stock_data_pipeline"],
+) as load_monthly_data:
     
-    message = str()
-
-    @task(task_id='start_loading_stock_data')
+    @task(task_id='start_loading')
     def start_loading():
 
-        response = requests.put(
-                f'{vps_host}/insert-monthly-data'
+        message = str()
+        
+        try:
+            response = requests.put(
+                f'{fastapi_host}/insert-monthly-data'
             )
+            
+            message = json.dumps(response.json())
 
-        message = json.dumps(response.json())
+            if response.json()["status_code"] != "200":
+                raise Exception('Data was not loaded!')
 
-        return 'Monthly Data was inserted'
+            requests.post(url, params={
+                'chat_id': chat_id,
+                'text': message
+            })
+
+            status_tg = requests.post(url, params={
+                'chat_id': chat_id,
+                'text': 'Monthly Data was inserted'
+            })
+
+            return f"""
+                    Monthly Data was inserted.
+                    TG Status:
+                    {json.dumps(status_tg.json())}
+                    """
+        except Exception as e:
+            status_tg = requests.post(url, params={
+                'chat_id': chat_id,
+                'text': f"""
+                        Error occured during loading monthly data.
+                        {message}
+                        """
+            })
+            raise Exception(message) + "\n" + json.dumps(status_tg.json())
     
-    @task(task_id='send_status_to_tg')
-    def send_status_to_tg():
-
-        requests.post(url, params={
-            'chat_id': chat_id,
-            'text': message
-        })
-
-    start_loading() >> send_status_to_tg()
+    start_loading()
 
 with DAG(
-    dag_id="loading_quarterly_data",
+    dag_id="load_quarterly_data",
     catchup=False,
     start_date=pendulum.datetime(2024, 3, 1, tz="UTC"),
-    schedule=timedelta(days=95),
-    tags=["produces", "dataset-scheduled"],
-) as dag1:
+    schedule=timedelta(days=93),
+    tags=["stock_data_pipeline"],
+) as load_quarterly_data:
     
-    message = str()
-
-    @task(task_id='start_loading_stock_data')
+    @task(task_id='start_loading')
     def start_loading():
 
-        response = requests.put(
-            f'{vps_host}/insert-quarterly-data'
-        )
+        message = str()
+        
+        try:
+            response = requests.get(
+                f'{fastapi_host}/insert-quarterly-data'
+            )
+            
+            message = json.dumps(response.json())
 
-        message = json.dumps(response.json())
+            if response.json()["status_code"] != "200":
+                raise Exception('Data was not loaded!')
 
-        return 'Quarterly Data was inserted'
+            requests.post(url, params={
+                'chat_id': chat_id,
+                'text': message
+            })
+
+            status_tg = requests.post(url, params={
+                'chat_id': chat_id,
+                'text': 'Quarterly Data was inserted'
+            })
+
+            return f"""
+                    Quarterly Data was inserted.
+                    TG Status:
+                    {json.dumps(status_tg.json())}
+                    """
+        except Exception as e:
+            status_tg = requests.post(url, params={
+                'chat_id': chat_id,
+                'text': f"""
+                        Error occured during loading monthly data.
+                        {message}
+                        """
+            })
+            raise Exception(message) + "\n" + json.dumps(status_tg.json())
     
-    @task(task_id='send_status_to_tg')
-    def send_status_to_tg():
-
-        requests.get(url, params={
-            'chat_id': chat_id,
-            'text': message
-        })
-
-    start_loading() >> send_status_to_tg()
+    start_loading()
 
 with DAG(
-    dag_id="loading_yearly_data",
+    dag_id="load_yearly_data",
     catchup=False,
-    start_date=pendulum.datetime(2024, 1, 1, tz="UTC"),
+    start_date=pendulum.datetime(2024, 3, 1, tz="UTC"),
     schedule='@yearly',
-    tags=["produces", "dataset-scheduled"],
-) as dag1:
+    tags=["stock_data_pipeline"],
+) as load_yearly_data:
     
-    message = str()
-
-    @task(task_id='start_loading_stock_data')
+    @task(task_id='start_loading')
     def start_loading():
 
-        response = requests.put(
-            f'{vps_host}/insert-yearly-data'
-        )
+        message = str()
+        
+        try:
+            response = requests.get(
+                f'{fastapi_host}/insert-yearly-data'
+            )
+            
+            message = json.dumps(response.json())
 
-        message = json.dumps(response.json())
+            if response.json()["status_code"] != "200":
+                raise Exception('Data was not loaded!')
+            
+            requests.post(url, params={
+                'chat_id': chat_id,
+                'text': message
+            })
 
-        return 'Yearly Data was inserted'
+            status_tg = requests.post(url, params={
+                'chat_id': chat_id,
+                'text': 'Yearly Data was inserted'
+            })
+
+            return f"""
+                    Yearly Data was inserted.
+                    TG Status:
+                    {json.dumps(status_tg.json())}
+                    """
+        except Exception as e:
+            status_tg = requests.post(url, params={
+                'chat_id': chat_id,
+                'text': f"""
+                        Error occured during loading monthly data.
+                        {message}
+                        """
+            })
+            raise Exception(message) + "\n" + json.dumps(status_tg.json())
     
-    @task(task_id='send_status_to_tg')
-    def send_status_to_tg():
-
-        requests.get(url, params={
-            'chat_id': chat_id,
-            'text': message
-        })
-
-    start_loading() >> send_status_to_tg()
+    start_loading()
