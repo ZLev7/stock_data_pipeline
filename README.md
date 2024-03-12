@@ -12,6 +12,9 @@ Lending rates (NewYorkFed.org API),
 Treasury rates (Treasury.gov Web Site),
 Stock financials (MacroTrends.net Web Site)
 
+Most of the data is in three periods: monthly, quarterly and annualy.
+Airflow (deployed separately) periodically intiates each accordingly.
+
 Below are technologies I used for this project:
 Pandas,
 Selenium,
